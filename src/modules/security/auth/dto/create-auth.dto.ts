@@ -27,15 +27,6 @@ export class RegisterDto {
   password: string;
 
   @ApiPropertyOptional({
-    example: 'guest',
-    enum: Role,
-    description: 'Foydalanuvchi roli (default: guest)',
-  })
-  @IsOptional()
-  @IsEnum(Role)
-  role?: Role;
-
-  @ApiPropertyOptional({
     example: 3,
     description: 'Region ID (ixtiyoriy)',
   })
