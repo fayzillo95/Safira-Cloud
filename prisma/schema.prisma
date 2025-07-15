@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String   @id @default(uuid())
+  name     String
+  email    String   @unique
+  password String
+  role     Role     @default(guest)
+  regionId Int?
+  region   Region?  @relation(fields: [regionId], references: [id])
+  contact  Contact?
+  profile  Profile?
+
+  fromMessages Chat[] @relation("FromMessages")
+  toMessages   Chat[] @relation("ToMessages")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  services Service[]
+
+  @@map("users")
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  phone     String
+  telegram  String?
+  whatsapp  String?
+  email     String?
+  instagram String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contacts")
+}
+
+model Profile {
+  id     Int     @id @default(autoincrement())
+  userId String  @unique
+  user   User    @relation(fields: [userId], references: [id])
+  avatar String?
+  bio    String?
+
+  @@map("profiles")
+}
+
+model Region {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
+  services Service[]
+  @@map("regions")
+}
+
+model Chat {
+  id        String    @id @default(uuid())
+  fromId    String
+  toId      String?
+  message   String?
+  createdAt DateTime? @default(now())
+
+  from User? @relation("FromMessages", fields: [fromId], references: [id])
+  to   User? @relation("ToMessages", fields: [toId], references: [id])
+
+  @@map("chats")
+}
+
+model Service {
+  id       String @id @default(uuid())
+  name     String
+  regionId Int
+
+  region Region @relation(fields: [regionId],references: [id])
+
+  description String? @default("Enter your  description !")
+  userId      String
+  user        User    @relation(fields: [userId], references: [id])
+
+  categories ServiceCategory[]
+}
+
+model Category {
+  id       Int               @id @default(autoincrement())
+  name     String            @unique
+  services ServiceCategory[]
+
+  @@map("categories")
+}
+
+model ServiceCategory {
+  id         Int    @id @default(autoincrement())
+  serviceId  String
+  categoryId Int
+
+  service  Service  @relation(fields: [serviceId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@unique([serviceId, categoryId])
+  @@map("service_categories")
+}
+
+enum Role {
+  guest
+  staff
+  admin
+  super_admin
+}
