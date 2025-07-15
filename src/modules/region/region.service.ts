@@ -1,49 +1,28 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateRegionDto } from './dto/create-region.dto';
 import { UpdateRegionDto } from './dto/update-region.dto';
 import { PrismaService } from 'src/core/prisma/prisma.service';
 
 @Injectable()
 export class RegionService {
-  constructor(private prisma: PrismaService) { }
-
-
-  async findAll() {
-    return this.prisma.region.findMany();
+  create(createRegionDto: CreateRegionDto) {
+    return 'This action adds a new region';
   }
 
-
-  async findOne(id: number) {
-    return this.prisma.region.findUnique({ where: { id } });
+  findAll() {
+    return `This action returns all region`;
   }
 
-
-  async create(payload: CreateRegionDto) {
-    if (await this.prisma.region.findUnique({ where: { name: payload.name } })) {
-      throw new ConflictException({ success: false, message: 'Region alredy exists !' })
-    }
-    await this.prisma.region.create({ data: payload })
-    return { success: true, message: 'Region succes created !' }
+  findOne(id: number) {
+    return `This action returns a #${id} region`;
   }
 
-
-  async update(id: number, payload: UpdateRegionDto) {
-    if (!await this.prisma.region.findUnique({ where: { id } })) {
-      throw new NotFoundException({ success: false, message: 'Region not found !' })
-    }
-    if (await this.prisma.region.findUnique({ where: { name: payload.name } })) {
-      throw new ConflictException({ success: false, message: 'Region name alredy exists !' })
-    }
-    await this.prisma.region.update({ where: { id }, data: payload, })
-    return { success: true, message: 'Region succes created !' }
+  update(id: number, updateRegionDto: UpdateRegionDto) {
+    return `This action updates a #${id} region`;
   }
 
-
-  async remove(id: number) {
-    if (!await this.prisma.region.findUnique({ where: { id } })) {
-      throw new NotFoundException({ success: false, message: 'Region not found !' })
-    }
-    return this.prisma.region.delete({ where: { id } });
+  remove(id: number) {
+    return `This action removes a #${id} region`;
   }
 }
 
