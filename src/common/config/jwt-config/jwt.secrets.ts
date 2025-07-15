@@ -7,7 +7,7 @@ export type jwtTokenType = "ACCESS" | "REFRESH" | "VERIFY"
 
 // payload  interface 
 export interface JwtPayload {
-    id: number,
+    id: string,
     role: Role
 }
 export interface JwtVerfyPayload{
