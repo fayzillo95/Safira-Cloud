@@ -7,30 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  guest
+  staff
+  admin
+  super_admin
+}
+
 model User {
-  id       String   @id @default(uuid())
-  name     String
-  email    String   @unique
-  password String
-  role     Role     @default(guest)
-  regionId Int?
-  region   Region?  @relation(fields: [regionId], references: [id])
-  contact  Contact?
-  profile  Profile?
+  id             String    @id @default(uuid())
+  name           String
+  email          String    @unique
+  password       String
+  role           Role      @default(guest)
 
-  fromMessages Chat[] @relation("FromMessages")
-  toMessages   Chat[] @relation("ToMessages")
+  regionId       Int?
+  region         Region?   @relation(fields: [regionId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  contact        Contact?
+  profile        Profile?
 
-  services Service[]
+  fromMessages   Chat[]    @relation("FromMessages")
+  toMessages     Chat[]    @relation("ToMessages")
 
-  @@map("users")
+  services       Service[]
+  comments       Comment[]
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model Contact {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id])
   phone     String
@@ -40,78 +48,81 @@ model Contact {
   instagram String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@map("contacts")
 }
 
 model Profile {
-  id     Int     @id @default(autoincrement())
-  userId String  @unique
-  user   User    @relation(fields: [userId], references: [id])
-  avatar String?
-  bio    String?
-
-  @@map("profiles")
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  avatar    String?
+  bio       String?
 }
 
 model Region {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  users User[]
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  users    User[]
   services Service[]
-  @@map("regions")
-}
-
-model Chat {
-  id        String    @id @default(uuid())
-  fromId    String
-  toId      String?
-  message   String?
-  createdAt DateTime? @default(now())
-
-  from User? @relation("FromMessages", fields: [fromId], references: [id])
-  to   User? @relation("ToMessages", fields: [toId], references: [id])
-
-  @@map("chats")
-}
-
-model Service {
-  id       String @id @default(uuid())
-  name     String
-  regionId Int
-
-  region Region @relation(fields: [regionId],references: [id])
-
-  description String? @default("Enter your  description !")
-  userId      String
-  user        User    @relation(fields: [userId], references: [id])
-
-  categories ServiceCategory[]
 }
 
 model Category {
-  id       Int               @id @default(autoincrement())
-  name     String            @unique
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
   services ServiceCategory[]
+}
 
-  @@map("categories")
+model Service {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  isActive    Boolean   @default(true)
+
+  ownerId     String
+  owner       User      @relation(fields: [ownerId], references: [id])
+
+  regionId    Int
+  region      Region    @relation(fields: [regionId], references: [id])
+
+  categories  ServiceCategory[]
+  comments    Comment[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model ServiceCategory {
-  id         Int    @id @default(autoincrement())
-  serviceId  String
-  categoryId Int
+  id          String   @id @default(uuid())
+  serviceId   String
+  categoryId  Int
 
-  service  Service  @relation(fields: [serviceId], references: [id])
-  category Category @relation(fields: [categoryId], references: [id])
+  service     Service  @relation(fields: [serviceId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id])
 
   @@unique([serviceId, categoryId])
-  @@map("service_categories")
 }
 
-enum Role {
-  guest
-  staff
-  admin
-  super_admin
+model Comment {
+  id          String   @id @default(uuid())
+  text        String
+  rating      Int      @default(5)
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  serviceId   String
+  service     Service  @relation(fields: [serviceId], references: [id])
+
+  createdAt   DateTime @default(now())
+}
+
+model Chat {
+  id        String   @id @default(uuid())
+  fromId    String
+  toId      String
+  message   String
+  createdAt DateTime @default(now())
+
+  from      User     @relation("FromMessages", fields: [fromId], references: [id])
+  to        User     @relation("ToMessages", fields: [toId], references: [id])
 }
