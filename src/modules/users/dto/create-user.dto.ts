@@ -27,12 +27,6 @@ export class CreateUserDto {
     password: string;
 
     @ApiPropertyOptional({
-        example: 'guest',
-        enum: Role,
-        description: 'Foydalanuvchi roli (default: guest)',
-    })
-
-    @ApiPropertyOptional({
         example: 3,
         description: 'Region ID (ixtiyoriy)',
     })
