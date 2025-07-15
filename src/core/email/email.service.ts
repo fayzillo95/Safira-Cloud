@@ -2,21 +2,14 @@
 
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { emailModuleOptions } from 'src/common/config/email-config/email.secrets';
 
 @Injectable()
 export class EmailService {
   private transporter: nodemailer.Transporter;
 
   constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
-      port: 587,
-      secure: false, // TLS emas
-      auth: {
-        user: 'josue77@ethereal.email',
-        pass: 'ufJFzuAW5kVn7geCq6',
-      },
-    });
+    this.transporter = nodemailer.createTransport(emailModuleOptions);
   }
 
   async sendMail(to: string, subject: string, html: string) {
