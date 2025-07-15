@@ -7,6 +7,10 @@ async function bootstrap() {
 
   await setterAppConfigurations(app)
   
-  await app.listen(process.env.PORT ?? 3000);
+  const PORT = process.env.PORT
+  const HOST = process.env.HOST
+  await app.listen(PORT ?? 3000);
+  const BASE_URL = `http://${HOST}:${PORT}/api`
+  console.log(`Swagger ${BASE_URL}/swagger`)
 }
 bootstrap();
