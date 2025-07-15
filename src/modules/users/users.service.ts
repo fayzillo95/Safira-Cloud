@@ -13,8 +13,8 @@ export class UsersService {
     const existUser = await this.prisma.user.findUnique({ where: { email: createUserDto.email } })
     if (existUser) throw new ConflictException("Foydaluvchi allaqachon mavjud!")
 
-    const round = this.configService.get<string>('BCRYPT_SALT_ROUNDS')
-    const hashPasword = await bcrypt.hash(createUserDto.password, round ? parseInt(round) : 10)
+    const round = this.configService.get<number>('BCRYPT_SALT_ROUNDS')
+    const hashPasword = await bcrypt.hash(createUserDto.password, round || 10)
     const createUser = await this.prisma.user.create({
       data: {
         email: createUserDto.email,
