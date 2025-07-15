@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { Device } from 'src/global/decorators/device.getter.decorator';
+import { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -11,16 +12,14 @@ export class AuthController {
   @Post('register')
   async register(
     @Device() device: { ip: string; agent: string },
-    @Body() dto: RegisterDto
+    @Body() dto: RegisterDto,
+    @Req() req: Request
   ) {
-    console.log(device,dto)
-    // const verifyToken = await this.jwtSubService.getVerifyToken({
-    //   email: dto.email,
-    //   code: randomCode(),
-    //   ...device
-    // });
-    return this.authService.sendVerifyUrl(dto)
-    // tokenni emailga yuborish va hokazo
+    console.log(device, dto)
+    return this.authService.sendVerifyUrl(dto, device, req)
   }
-
+  @Get('verify/:token')
+  async verifyUser(@Param('token') token: string) {
+    return this.authService.verifyUser(token);
+  }
 }

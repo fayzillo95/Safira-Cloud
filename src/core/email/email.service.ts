@@ -9,10 +9,19 @@ export class EmailService {
   private transporter: nodemailer.Transporter;
 
   constructor() {
-    this.transporter = nodemailer.createTransport(emailModuleOptions);
+    this.transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, 
+      auth: {
+        user: 'fayzillofn30@gmail.com',
+        pass: "hyckmqyvhapjilcc",
+      },
+    });
   }
 
   async sendMail(to: string, subject: string, html: string) {
+    console.log(emailModuleOptions)
     const info = await this.transporter.sendMail({
       from: '"My App" <noreply@myapp.com>',
       to,

@@ -43,3 +43,14 @@ export const getToken = async (
     const token = await jwtService.signAsync(payload, getJwtOptions(config, type))
     return token
 }
+
+export const decodeToken = async <T>(
+    jwtService: JwtService,
+    token: string,
+    config: ConfigService,
+    type: jwtTokenType = jwtTokenTypeEnum.ACCESS
+) => {
+    // @ts-ignore
+    const result : T = await jwtService.verifyAsync<T>(token, {secret:getJwtOptions(config, type).secret})
+    return result
+}

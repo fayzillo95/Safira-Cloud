@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { Request } from 'express';
-import { getJwtOptions, getToken, jwtTokenTypeEnum } from 'src/common/config/jwt-config/jwt.secrets';
+import { decodeToken, getJwtOptions, getToken, jwtTokenType, jwtTokenTypeEnum, JwtVerfyPayload } from 'src/common/config/jwt-config/jwt.secrets';
 
 @Injectable()
 export class JwtSubService {
@@ -38,5 +38,9 @@ export class JwtSubService {
             this.configService,jwtTokenTypeEnum.VERIFY
         );
         return token;
+    }
+    async verifyToken<T>(token:string,type : jwtTokenType) : Promise<T>{
+        const result : T = await decodeToken<T>(this.jwtService,token,this.configService,type)
+        return result
     }
 }
