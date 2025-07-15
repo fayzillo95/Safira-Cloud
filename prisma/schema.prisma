@@ -41,7 +41,7 @@ model Contact {
   id        String   @id @default(uuid())
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id])
-  phone     String
+  phone     String?
   telegram  String?
   whatsapp  String?
   email     String?
