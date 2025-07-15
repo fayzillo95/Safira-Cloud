@@ -119,10 +119,10 @@ model Comment {
 model Chat {
   id        String   @id @default(uuid())
   fromId    String
-  toId      String
-  message   String
+  toId      String?
+  message   String?
   createdAt DateTime @default(now())
 
   from      User     @relation("FromMessages", fields: [fromId], references: [id])
-  to        User     @relation("ToMessages", fields: [toId], references: [id])
+  to        User?     @relation("ToMessages", fields: [toId], references: [id])
 }
